@@ -1,0 +1,294 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database with PostGIS
+  database:
+    image: postgis/postgis:15-3.3
+    container_name: cdst-database
+    environment:
+      POSTGRES_DB: cdst_optimization
+      POSTGRES_USER: cdst_user
+      POSTGRES_PASSWORD: cdst_password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - cdst-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cdst_user -d cdst_optimization"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Redis Cache and Session Store
+  redis:
+    image: redis:7.2-alpine
+    container_name: cdst-redis
+    command: redis-server --appendonly yes --requirepass cdst_redis_password
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - cdst-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # FastAPI Backend Application
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: cdst-backend
+    environment:
+      # Database Configuration
+      POSTGRES_SERVER: database
+      POSTGRES_USER: cdst_user
+      POSTGRES_PASSWORD: cdst_password
+      POSTGRES_DB: cdst_optimization
+      POSTGRES_PORT: 5432
+      
+      # Redis Configuration
+      REDIS_URL: redis://:cdst_redis_password@redis:6379/0
+      CELERY_BROKER_URL: redis://:cdst_redis_password@redis:6379/1
+      CELERY_RESULT_BACKEND: redis://:cdst_redis_password@redis:6379/2
+      
+      # Application Configuration
+      SECRET_KEY: your-super-secret-key-change-in-production
+      DEBUG: "false"
+      LOG_LEVEL: INFO
+      
+      # External Services
+      OSRM_BASE_URL: http://osrm:5000
+      
+      # Feature Flags
+      ENABLE_OPTIMIZATION: "true"
+      ENABLE_ROUTING_API: "true"
+      ENABLE_DATA_IMPORT: "true"
+      ENABLE_REPORTS: "true"
+      
+      # Performance Settings
+      DATABASE_POOL_SIZE: 10
+      DATABASE_MAX_OVERFLOW: 20
+      OPTIMIZATION_POPULATION_SIZE: 200
+      OPTIMIZATION_MAX_GENERATIONS: 500
+      
+    volumes:
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+      - ./data:/app/data
+    ports:
+      - "8000:8000"
+    networks:
+      - cdst-network
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Celery Worker for Background Tasks
+  celery-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: cdst-celery-worker
+    command: celery -A app.core.celery worker --loglevel=info --concurrency=4
+    environment:
+      # Database Configuration
+      POSTGRES_SERVER: database
+      POSTGRES_USER: cdst_user
+      POSTGRES_PASSWORD: cdst_password
+      POSTGRES_DB: cdst_optimization
+      POSTGRES_PORT: 5432
+      
+      # Redis Configuration
+      REDIS_URL: redis://:cdst_redis_password@redis:6379/0
+      CELERY_BROKER_URL: redis://:cdst_redis_password@redis:6379/1
+      CELERY_RESULT_BACKEND: redis://:cdst_redis_password@redis:6379/2
+      
+      # Application Configuration
+      SECRET_KEY: your-super-secret-key-change-in-production
+      DEBUG: "false"
+      LOG_LEVEL: INFO
+      
+    volumes:
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+      - ./data:/app/data
+    networks:
+      - cdst-network
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Celery Beat Scheduler
+  celery-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: cdst-celery-beat
+    command: celery -A app.core.celery beat --loglevel=info
+    environment:
+      # Database Configuration
+      POSTGRES_SERVER: database
+      POSTGRES_USER: cdst_user
+      POSTGRES_PASSWORD: cdst_password
+      POSTGRES_DB: cdst_optimization
+      POSTGRES_PORT: 5432
+      
+      # Redis Configuration
+      REDIS_URL: redis://:cdst_redis_password@redis:6379/0
+      CELERY_BROKER_URL: redis://:cdst_redis_password@redis:6379/1
+      CELERY_RESULT_BACKEND: redis://:cdst_redis_password@redis:6379/2
+      
+      # Application Configuration
+      SECRET_KEY: your-super-secret-key-change-in-production
+      DEBUG: "false"
+      LOG_LEVEL: INFO
+      
+    volumes:
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    networks:
+      - cdst-network
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # OSRM Routing Service
+  osrm:
+    image: osrm/osrm-backend:latest
+    container_name: cdst-osrm
+    command: osrm-routed --algorithm mld /data/map.osrm
+    volumes:
+      - osrm_data:/data
+    ports:
+      - "5000:5000"
+    networks:
+      - cdst-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: cdst-nginx
+    volumes:
+      - ./deployment/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./deployment/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./frontend/dist:/usr/share/nginx/html:ro
+      - ./uploads:/usr/share/nginx/uploads:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - cdst-network
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # Prometheus Monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: cdst-prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./deployment/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - cdst-network
+    restart: unless-stopped
+
+  # Grafana Dashboard
+  grafana:
+    image: grafana/grafana:latest
+    container_name: cdst-grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: cdst_grafana_password
+      GF_USERS_ALLOW_SIGN_UP: false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./deployment/grafana/provisioning:/etc/grafana/provisioning:ro
+    ports:
+      - "3000:3000"
+    networks:
+      - cdst-network
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+  # Streamlit Frontend (Optional - for development)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cdst-frontend
+    environment:
+      BACKEND_URL: http://backend:8000
+    ports:
+      - "8501:8501"
+    networks:
+      - cdst-network
+    depends_on:
+      - backend
+    restart: unless-stopped
+    profiles:
+      - development
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  osrm_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  cdst-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
