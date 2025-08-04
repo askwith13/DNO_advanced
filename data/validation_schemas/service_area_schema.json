@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Service Area Data Schema",
+  "type": "object",
+  "required": [
+    "area_id",
+    "name",
+    "latitude",
+    "longitude"
+  ],
+  "properties": {
+    "area_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255,
+      "pattern": "^[A-Z0-9_-]+$",
+      "description": "Unique identifier for the service area"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255,
+      "description": "Service area name"
+    },
+    "latitude": {
+      "type": "number",
+      "minimum": -90,
+      "maximum": 90,
+      "description": "Latitude coordinate in decimal degrees"
+    },
+    "longitude": {
+      "type": "number",
+      "minimum": -180,
+      "maximum": 180,
+      "description": "Longitude coordinate in decimal degrees"
+    },
+    "population": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10000000,
+      "default": 0,
+      "description": "Population served by this area"
+    },
+    "region": {
+      "type": ["string", "null"],
+      "maxLength": 100,
+      "description": "Geographic region or state"
+    },
+    "district": {
+      "type": ["string", "null"],
+      "maxLength": 100,
+      "description": "Administrative district or county"
+    },
+    "urban_rural": {
+      "type": "string",
+      "enum": ["urban", "suburban", "rural"],
+      "default": "urban",
+      "description": "Classification of area type"
+    },
+    "accessibility_index": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.5,
+      "description": "Accessibility index for transportation (0-1)"
+    },
+    "priority_level": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "default": 3,
+      "description": "Priority level for service (1=lowest, 5=highest)"
+    }
+  },
+  "additionalProperties": false
+}

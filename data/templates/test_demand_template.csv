@@ -1,0 +1,49 @@
+area_id,test_type,demand_date,test_count,priority_level,notes
+AREA001,Culture Test - Basic,2024-01-15,25,3,Regular monthly demand
+AREA001,Culture Test - Advanced,2024-01-15,8,2,Specialized cases
+AREA001,Drug Sensitivity - Standard Panel,2024-01-15,15,3,Standard screening
+AREA001,Drug Sensitivity - Extended Panel,2024-01-15,5,4,High-risk patients
+AREA001,Rapid Diagnostic Test,2024-01-15,45,1,Emergency screening
+AREA002,Culture Test - Basic,2024-01-15,18,3,Regular monthly demand
+AREA002,Culture Test - Advanced,2024-01-15,6,2,Specialized cases
+AREA002,Drug Sensitivity - Standard Panel,2024-01-15,12,3,Standard screening
+AREA002,Rapid Diagnostic Test,2024-01-15,32,1,Emergency screening
+AREA003,Culture Test - Basic,2024-01-15,32,3,Regular monthly demand
+AREA003,Culture Test - Advanced,2024-01-15,12,2,Specialized cases
+AREA003,Drug Sensitivity - Standard Panel,2024-01-15,20,3,Standard screening
+AREA003,Drug Sensitivity - Extended Panel,2024-01-15,8,4,High-risk patients
+AREA003,Mycobacterium Culture,2024-01-15,3,5,TB screening program
+AREA003,Rapid Diagnostic Test,2024-01-15,55,1,Emergency screening
+AREA004,Culture Test - Basic,2024-01-15,48,3,Regular monthly demand
+AREA004,Culture Test - Advanced,2024-01-15,15,2,Specialized cases
+AREA004,Drug Sensitivity - Standard Panel,2024-01-15,28,3,Standard screening
+AREA004,Drug Sensitivity - Extended Panel,2024-01-15,12,4,High-risk patients
+AREA004,Mycobacterium Culture,2024-01-15,8,5,TB screening program
+AREA004,Fungal Culture,2024-01-15,4,4,Immunocompromised patients
+AREA004,Rapid Diagnostic Test,2024-01-15,72,1,Emergency screening
+AREA005,Culture Test - Basic,2024-01-15,12,3,Regular monthly demand
+AREA005,Drug Sensitivity - Standard Panel,2024-01-15,8,3,Standard screening
+AREA005,Rapid Diagnostic Test,2024-01-15,22,1,Emergency screening
+AREA006,Culture Test - Basic,2024-01-15,16,3,Regular monthly demand
+AREA006,Culture Test - Advanced,2024-01-15,5,2,Specialized cases
+AREA006,Drug Sensitivity - Standard Panel,2024-01-15,10,3,Standard screening
+AREA006,Rapid Diagnostic Test,2024-01-15,28,1,Emergency screening
+AREA007,Culture Test - Basic,2024-01-15,18,3,Regular monthly demand
+AREA007,Drug Sensitivity - Standard Panel,2024-01-15,12,3,Standard screening
+AREA007,Drug Sensitivity - Extended Panel,2024-01-15,4,4,High-risk patients
+AREA007,Rapid Diagnostic Test,2024-01-15,35,1,Emergency screening
+AREA008,Culture Test - Basic,2024-01-15,28,3,Regular monthly demand
+AREA008,Culture Test - Advanced,2024-01-15,8,2,Specialized cases
+AREA008,Drug Sensitivity - Standard Panel,2024-01-15,18,3,Standard screening
+AREA008,Drug Sensitivity - Extended Panel,2024-01-15,6,4,High-risk patients
+AREA008,Rapid Diagnostic Test,2024-01-15,42,1,Emergency screening
+AREA009,Culture Test - Basic,2024-01-15,35,3,Regular monthly demand
+AREA009,Culture Test - Advanced,2024-01-15,12,2,Specialized cases
+AREA009,Drug Sensitivity - Standard Panel,2024-01-15,22,3,Standard screening
+AREA009,Drug Sensitivity - Extended Panel,2024-01-15,8,4,High-risk patients
+AREA009,Mycobacterium Culture,2024-01-15,5,5,TB screening program
+AREA009,Rapid Diagnostic Test,2024-01-15,58,1,Emergency screening
+AREA010,Culture Test - Basic,2024-01-15,22,3,Regular monthly demand
+AREA010,Culture Test - Advanced,2024-01-15,7,2,Specialized cases
+AREA010,Drug Sensitivity - Standard Panel,2024-01-15,15,3,Standard screening
+AREA010,Rapid Diagnostic Test,2024-01-15,38,1,Emergency screening
