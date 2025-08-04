@@ -1,0 +1,21 @@
+area_id,name,latitude,longitude,population,region,district
+AREA001,Downtown Manhattan,40.7505,-73.9934,75000,Manhattan,Financial District
+AREA002,Midtown West,40.7614,-73.9776,45000,Manhattan,Theater District
+AREA003,Upper East Side,40.7736,-73.9566,85000,Manhattan,Upper East Side
+AREA004,Harlem,40.8116,-73.9465,120000,Manhattan,Central Harlem
+AREA005,Brooklyn Heights,40.6962,-73.9927,25000,Brooklyn,Northwest Brooklyn
+AREA006,Park Slope,40.6736,-73.9796,35000,Brooklyn,Northwest Brooklyn
+AREA007,Williamsburg,40.7081,-73.9571,40000,Brooklyn,North Brooklyn
+AREA008,Bay Ridge,40.6350,-74.0134,65000,Brooklyn,Southwest Brooklyn
+AREA009,Flushing,40.7648,-73.8336,72000,Queens,Northeast Queens
+AREA010,Astoria,40.7722,-73.9196,48000,Queens,Northwest Queens
+AREA011,Jamaica,40.6892,-73.8056,55000,Queens,Southeast Queens
+AREA012,Long Island City,40.7505,-73.9370,28000,Queens,Northwest Queens
+AREA013,Mott Haven,40.8043,-73.9249,52000,Bronx,South Bronx
+AREA014,Fordham,40.8601,-73.8987,58000,Bronx,Central Bronx
+AREA015,Riverdale,40.8990,-73.9057,25000,Bronx,Northwest Bronx
+AREA016,St. George,40.6436,-74.0776,18000,Staten Island,North Shore
+AREA017,Stapleton,40.6276,-74.0771,22000,Staten Island,North Shore
+AREA018,New Dorp,40.5734,-74.1154,32000,Staten Island,Mid-Island
+AREA019,Tottenville,40.5057,-74.2426,15000,Staten Island,South Shore
+AREA020,Great Kills,40.5551,-74.1590,28000,Staten Island,South Shore

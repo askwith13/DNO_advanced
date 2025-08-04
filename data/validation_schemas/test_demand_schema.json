@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Test Demand Data Schema",
+  "type": "object",
+  "required": [
+    "area_id",
+    "test_type",
+    "demand_date",
+    "test_count"
+  ],
+  "properties": {
+    "area_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255,
+      "pattern": "^[A-Z0-9_-]+$",
+      "description": "Service area identifier"
+    },
+    "test_type": {
+      "type": "string",
+      "enum": [
+        "Culture Test - Basic",
+        "Culture Test - Advanced",
+        "Drug Sensitivity - Standard Panel",
+        "Drug Sensitivity - Extended Panel",
+        "Mycobacterium Culture",
+        "Fungal Culture",
+        "Rapid Diagnostic Test"
+      ],
+      "description": "Type of test demanded"
+    },
+    "demand_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of demand in YYYY-MM-DD format"
+    },
+    "test_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100000,
+      "description": "Number of tests demanded"
+    },
+    "priority_level": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "default": 3,
+      "description": "Priority level (1=lowest, 5=highest)"
+    },
+    "urgency": {
+      "type": "string",
+      "enum": ["routine", "urgent", "emergency"],
+      "default": "routine",
+      "description": "Urgency classification"
+    },
+    "patient_category": {
+      "type": "string",
+      "enum": ["general", "pediatric", "geriatric", "immunocompromised", "high_risk"],
+      "default": "general",
+      "description": "Patient population category"
+    },
+    "seasonal_factor": {
+      "type": "number",
+      "minimum": 0.1,
+      "maximum": 5.0,
+      "default": 1.0,
+      "description": "Seasonal adjustment factor"
+    },
+    "notes": {
+      "type": ["string", "null"],
+      "maxLength": 500,
+      "description": "Additional notes about the demand"
+    }
+  },
+  "additionalProperties": false
+}
